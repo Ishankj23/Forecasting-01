@@ -1,0 +1,12 @@
+numpy
+pandas
+matplotlib
+joblib
+statsmodels
+pmdarima
+streamlit
+scipy
+seaborn
+ipykernel
+scikit-learn
+-e .
