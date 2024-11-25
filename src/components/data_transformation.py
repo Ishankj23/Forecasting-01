@@ -45,8 +45,8 @@ class DataTransformation:
 
 
             # Apply transformations for time series data
-            train_df = self.prepare_time_series_data(train_df, 'Transaction Date', 'Amount')
-            test_df = self.prepare_time_series_data(test_df, 'Transaction Date', 'Amount')
+            train_df = self.prepare_time_series_data(train_df)
+            test_df = self.prepare_time_series_data(test_df)
 
             # Save transformed data
             self.save_transformed_data(train_df, test_df)
@@ -55,28 +55,26 @@ class DataTransformation:
         except Exception as e:
             raise CustomException(e, sys)
 
-    def prepare_time_series_data(self, df, date_column, value_column):
+    def prepare_time_series_data(self, df):
         """
-        Prepare time series data for forecasting.
+        Prepares a DataFrame for time series forecasting.
         Args:
-            df (DataFrame): The input DataFrame.
-            date_column (str): The column name for date.
-            value_column (str): The column name for the value to forecast.
+        df (DataFrame): The input DataFrame with 'Transaction Date' and 'Amount' columns.
         Returns:
-            DataFrame: Transformed DataFrame suitable for time series forecasting.
+        DataFrame: Transformed DataFrame with 'Transaction Date' as index and 'Amount' processed.
         """
         try:
             # Ensure 'Transaction Date' is in datetime format
-            df[date_column] = pd.to_datetime(df[date_column])
+            df['Transaction Date'] = pd.to_datetime(df['Transaction Date'])
 
             # Sort by date to ensure correct order for time series analysis
-            df = df.sort_values(by=date_column)
+            df = df.sort_values(by='Transaction Date')
 
             # Set the 'Transaction Date' as the index for time series analysis
-            df.set_index(date_column, inplace=True)
+            df.set_index('Transaction Date', inplace=True)
 
             # Interpolate missing values in the 'Amount' column
-            df[value_column] = df[value_column].interpolate(method='linear')
+            df['Amount'] = df['Amount'].interpolate(method='linear')
 
             logging.info("Prepared data for time series forecasting")
             return df
